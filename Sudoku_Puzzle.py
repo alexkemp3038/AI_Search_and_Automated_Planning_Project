@@ -1,5 +1,8 @@
 import os, csv
 
+# Define the domain of valid Sudoku numbers
+DOMAIN = {1, 2, 3, 4, 5, 6, 7, 8, 9}
+
 #Takes a name for a sudoku file
 def get_filepath():
     while True:
@@ -49,6 +52,18 @@ def read_sudoku_file(filePath, ext):
 
     return sudokuData
 
+#Prints the Sudoku grid in a readable format
+def print_sudoku(grid):
+    for i, row in enumerate(grid):
+        if i % 3 == 0 and i != 0:
+            print("- " * 11)
+        row_str = ""
+        for j, val in enumerate(row):
+            if j % 3 == 0 and j != 0:
+                row_str += "| "
+            row_str += f"{val if val != 0 else '.'} "
+        print(row_str)
+
 # Checks if the number to be inserted (k) is valid within the given grid, row and column
 def is_valid(grid, r, c, k):
     # To be valid, it needs to pass 3 constraints:
@@ -77,9 +92,9 @@ def sudoku_num_calc(cell, sudoku):
 
     box_values = [sudoku[(i,j)] for i in range(row//3*3, row//3*3 + 3) for j in range(column//3*3, column//3*3 +3) if (i,j) in sudoku]
 
-    used_values = [row_values + column_values + box_ values]
+    used_values = [row_values + column_values + box_values]
 
-    legal_values = domain - used_values
+    legal_values = DOMAIN - used_values
 
 # Solves the Sudoku puzzle using recursive backtracking
 def solve(grid, r=1, c=1):
@@ -99,7 +114,7 @@ def solve(grid, r=1, c=1):
     else:
         for k in range(1, 10):
             # Check if the number is valid
-            if is_valid(grid, r, c, k):
+            if is_valid(grid, r - 1, c - 1, k):
                 # If valid, we place the number in the cell
                 grid[r-1][c-1] = k
 
@@ -123,6 +138,10 @@ for row in sudokuData:
     print(row)
 
 # Solve the Sudoku puzzle
-solve(sudokuData)
+if solve(sudokuData):
+    print("\n--- Solved Sudoku Puzzle ---")
+    print_sudoku(sudokuData)
+else:
+    print("\nNo solution exists for the given Sudoku puzzle.")
 
 
