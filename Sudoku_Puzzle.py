@@ -66,6 +66,31 @@ def is_valid_file(sudokuData):
                 return False
     
     return True
+
+def is_valid_sudoku(grid):
+    # To be valid, it needs to pass 3 constraints:
+    for r in range(9):
+        for c in range(9):
+            k = grid[r][c]
+
+        if k == 0:
+            continue
+    # 1. The number is not already in the row
+        rowCheck = k not in grid[r]
+
+    # 2. The number is not already in the column
+        columnCheck = k not in [grid[i][c] for i in range(9)]
+
+    # 3. The number is not already in the 3x3 box
+        boxCheck = k not in [grid[i][j] for i in range(r//3*3, r//3*3 + 3) for j in range(c//3*3, c//3*3 + 3)]
+
+    # Will return:
+        # True if the number is valid
+        # False if the number is not valid
+        if not (rowCheck and columnCheck and boxCheck):
+            return False
+
+    return True
   
 
     
@@ -136,16 +161,21 @@ sudokuData = read_sudoku_file(filePath, ext)
 if not is_valid_file(sudokuData):
     print("Invalid Sudoku file!")
 
-
-sudoku = convert_sudoku_to_dict(sudokuData)
-
-if solve_sudoku(sudoku):
-    print("Sudoku succesfully solved!")
-    for i in range(9):
-        print([sudoku[(i,j)] for j in range(9)])
+elif not is_valid_sudoku(sudokuData):
+    print ("Invalid Sudoku puzzle!")
 
 else:
-    print("No solution can be found")
+
+
+    sudoku = convert_sudoku_to_dict(sudokuData)
+
+    if solve_sudoku(sudoku):
+        print("Sudoku succesfully solved!")
+        for i in range(9):
+            print([sudoku[(i,j)] for j in range(9)])
+
+    else:
+        print("No solution can be found")
 
     
 
