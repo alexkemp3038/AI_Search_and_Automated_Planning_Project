@@ -1,11 +1,74 @@
+import os, csv
 
-#each cell
-cell
-sudoku
+#Takes a name for a sudoku file
+def get_filepath():
+    while True:
+        filePath = input("Please enter the file path of the sudoku file (.txt or .csv): ")
+
+        #Check if file exists
+        if not os.path.exists(filePath):
+            print("File not found. Please try again.")
+            continue
+
+        #Extract extension
+        _, ext = os.path.splitext(filePath)
+        ext = ext.lower()
+
+        #Check if the file extension is valid
+        if ext in ['.txt', '.csv']:
+            return filePath, ext
+        else:   
+            print("Invalid file type. Please enter a .txt or .csv file.")
+
+# Reads the sudoku data from a file and returns it as a list of lists
+def read_sudoku_file(filePath, ext):
+    sudokuData = []
+
+    # Opens file contents
+    with open(filePath, 'r') as file:
+        # If file is a .txt file
+        if ext == '.txt':
+            # Read each line in the file
+            for line in file:
+                # Remove whitespace
+                line = line.strip()
+                # Skips empty lines
+                if line:
+                    sudokuData.append([int(num) for num in line.split()])
+
+        # If file is a .csv file
+        elif ext == '.csv':
+            # Use csv.reader to read the file
+            reader = csv.reader(file)
+            # Read each line in the CSV file
+            for line in reader:
+                # Skips empty lines
+                if line:
+                    # If the line is not empty, convert the numbers to integers
+                    sudokuData.append([int(num) for num in line])
+
+    return sudokuData
 
 
 #values in the cells
 domain = {1,2,3,4,5,6,7,8,9}
+
+def is_valid_file(sudokuData):
+    if len(sudokuData) != 9:
+        return False
+    
+    for row in sudokuData:
+        if len(row) !=9 :
+            return False
+        
+        for value in row:
+            if value not in domain and value != 0:
+                return False
+    
+    return True
+  
+
+    
 
 #calculate the remaining possible values for each cell
 def sudoku_legal_values(cell, sudoku):
@@ -23,6 +86,16 @@ def sudoku_legal_values(cell, sudoku):
     legal_values = domain - used_values
 
     return legal_values
+
+def convert_sudoku_to_dict(sudokuData):
+    sudoku = {}
+    for i in range(9):
+        for j in range(9):
+            sudoku[(i,j)] = sudoku[i][j]
+
+    return sudoku
+
+
 
 
 
@@ -52,6 +125,28 @@ def solve_sudoku(sudoku):
         sudoku[cell] = 0
 
     return False
+
+
+
+
+filePath, ext = get_filepath()
+
+sudokuData = read_sudoku_file(filePath, ext)
+
+if not is_valid_file(sudokuData):
+    print("Invalid Sudoku file!")
+
+
+sudoku = convert_sudoku_to_dict(sudokuData)
+
+if solve_sudoku(sudoku):
+    print("Sudoku succesfully solved!")
+    for i in range(9):
+        print([sudoku[(i,j)] for j in range(9)])
+
+else:
+    print("No solution can be found")
+
     
 
         
