@@ -6,8 +6,10 @@
     ; -------------------------------
 
     (:types
-    rover lander waypoint sample data)
-
+    rover lander waypoint sample data - object
+    image scan - data
+    )
+    
     ; -------------------------------
     ; Predicates
     ; -------------------------------
@@ -34,8 +36,14 @@
         ; Checks connectivity of two waypoints
         (connected ?from ?to - waypoint)
 
-        ; Records the data a rover is carrying
+        ; Waypoint where data ?d is captured.
+        (data-at ?d - data ?w - waypoint)
+
+        ; Records the image a rover is carrying
         (rover-data ?r - rover ?d - data) 
+
+        ; Data that has been transmitted to this lander
+        (transmitted-data ?l - lander ?d - data)
 
         ; Checks if rover is carrying item of data
         (rover-data-free ?r - rover)
@@ -51,9 +59,6 @@
 
         ; Checks if lander is storing any sample
         (lander-sample-free ?l - lander)
-
-        ; Keeps record of data transmission
-        (transmit-data ?r - rover ?l - lander ?d - data)
     )
 
     ; -------------------------------
@@ -106,13 +111,15 @@
     (:action rover_acquire_data
         :parameters (?r - rover ?w - waypoint ?d - data)
 
-        ; For a rover to acquire data:
+        ; For a rover to acquire image:
         ; 1. The rover must currently not carry any items of data.
         ; 2. (Assumption) The rover must be deployed
+        ; 3. The rover must be at the waypoint where the data is captured.
         :precondition (and (rover-data-free ?r)
-                           (rover-at ?r ?w))
+                           (rover-at ?r ?w)
+                           (data-at ?d ?w))
     
-        ; Now rovers data slot is no longer free and is carrying 'data'
+        ; Now rovers data slot is no longer free and is carrying data.
         :effect (and (not (rover-data-free ?r) )
                 (rover-data ?r ?d))
     )
@@ -120,16 +127,16 @@
     (:action rover_transmit_data
         :parameters (?r - rover ?l - lander ?d - data)
 
-        ; For a rover to transmit data:
+        ; For a rover to transmit an image:
         ; 1. It must be carrying an item of data
         ; 2. The rover must belong to that lander
         :precondition (and (rover-lander ?r ?l)
                            (rover-data ?r ?d))
 
-        ; Lander has received data and rovers memory is free'd.
+        ; Lander has received the data and rovers memory is free'd.
         :effect (and (not (rover-data ?r ?d) )
                      (rover-data-free ?r)
-                     (transmit-data ?r ?l ?d))
+                     (transmitted-data ?l ?d))
     )
 
     (:action rover_collect_sample
