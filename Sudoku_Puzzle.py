@@ -187,9 +187,8 @@ else:
 
     if solve_sudoku(sudoku):
         print("Sudoku succesfully solved!")
-        for i in range(9):
-            print([sudoku[(i,j)] for j in range(9)])
-
+        print_sudoku(sudoku)
+    
     else:
         print("No solution can be found")
 
