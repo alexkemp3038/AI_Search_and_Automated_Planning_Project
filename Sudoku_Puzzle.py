@@ -128,7 +128,7 @@ def convert_sudoku_to_dict(sudokuData):
     sudoku = {}
     for i in range(9):
         for j in range(9):
-            sudoku[(i,j)] = sudoku[i][j]
+            sudoku[(i,j)] = sudokuData[i][j]
 
     return sudoku
 
