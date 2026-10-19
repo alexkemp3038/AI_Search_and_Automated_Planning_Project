@@ -95,6 +95,11 @@ def is_valid_sudoku(grid):
         # True if the number is valid
         # False if the number is not valid
         if not (rowCheck and columnCheck and boxCheck):
+            print("Invalid number:", k)
+            print("Position:", r, c)
+            print("Row check:", rowCheck)
+            print("Column check:", columnCheck)
+            print("Box check:", boxCheck)
             return False
 
     return True
