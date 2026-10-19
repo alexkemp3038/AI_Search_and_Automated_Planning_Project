@@ -73,8 +73,12 @@ def is_valid_sudoku(grid):
         for c in range(9):
             k = grid[r][c]
 
-        if k == 0:
-            continue
+            if k == 0:
+                continue
+
+        #initalise the cell to 0 so it doesnt count itself
+        grid[r][c] = 0
+    
     # 1. The number is not already in the row
         rowCheck = k not in grid[r]
 
@@ -83,6 +87,9 @@ def is_valid_sudoku(grid):
 
     # 3. The number is not already in the 3x3 box
         boxCheck = k not in [grid[i][j] for i in range(r//3*3, r//3*3 + 3) for j in range(c//3*3, c//3*3 + 3)]
+
+        #4. Restore the orignal value of the cell
+        grid[r][c] = k
 
     # Will return:
         # True if the number is valid
