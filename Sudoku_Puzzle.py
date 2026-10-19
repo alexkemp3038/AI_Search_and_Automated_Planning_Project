@@ -77,30 +77,30 @@ def is_valid_sudoku(grid):
                 continue
 
         #initalise the cell to 0 so it doesnt count itself
-        grid[r][c] = 0
+            grid[r][c] = 0
     
     # 1. The number is not already in the row
-        rowCheck = k not in grid[r]
+            rowCheck = k not in grid[r]
 
     # 2. The number is not already in the column
-        columnCheck = k not in [grid[i][c] for i in range(9)]
+            columnCheck = k not in [grid[i][c] for i in range(9)]
 
     # 3. The number is not already in the 3x3 box
-        boxCheck = k not in [grid[i][j] for i in range(r//3*3, r//3*3 + 3) for j in range(c//3*3, c//3*3 + 3)]
+            boxCheck = k not in [grid[i][j] for i in range(r//3*3, r//3*3 + 3) for j in range(c//3*3, c//3*3 + 3)]
 
         #4. Restore the orignal value of the cell
-        grid[r][c] = k
+            grid[r][c] = k
 
     # Will return:
         # True if the number is valid
         # False if the number is not valid
-        if not (rowCheck and columnCheck and boxCheck):
-            print("Invalid number:", k)
-            print("Position:", r, c)
-            print("Row check:", rowCheck)
-            print("Column check:", columnCheck)
-            print("Box check:", boxCheck)
-            return False
+            if not (rowCheck and columnCheck and boxCheck):
+                print("Invalid number:", k)
+                print("Position:", r, c)
+                print("Row check:", rowCheck)
+                print("Column check:", columnCheck)
+                print("Box check:", boxCheck)
+                return False
 
     return True
   
