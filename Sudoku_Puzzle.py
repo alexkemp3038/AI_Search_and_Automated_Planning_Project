@@ -120,6 +120,22 @@ def convert_sudoku_to_dict(sudokuData):
 
     return sudoku
 
+def print_sudoku(sudoku):
+    for i in range(9):
+        if i % 3 == 0:
+            print("------------------------")
+
+    for j in range(9):
+        if j %3 == 0:
+            print("|", end = " ")
+
+        print(sudoku[(i,j)], end = " ")
+
+    print("|")
+
+print("------------------------")
+
+
 
 
 
