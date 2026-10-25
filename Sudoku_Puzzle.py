@@ -53,20 +53,25 @@ def read_sudoku_file(filePath, ext):
 #values in the cells
 domain = {1,2,3,4,5,6,7,8,9}
 
+# finds if the given sudoku file is suitable to be used
 def is_valid_file(sudokuData):
+    #check there is 9 rows
     if len(sudokuData) != 9:
         return False
-    
+
+    #check that each row has 9 values
     for row in sudokuData:
         if len(row) !=9 :
             return False
-        
+
+        #check that each value is in the domain
         for value in row:
             if value not in domain and value != 0:
                 return False
     
     return True
 
+#finds if the given sudoku puzzle is valid 
 def is_valid_sudoku(grid):
     # To be valid, it needs to pass 3 constraints:
     for r in range(9):
@@ -109,42 +114,60 @@ def is_valid_sudoku(grid):
 
 #calculate the remaining possible values for each cell
 def sudoku_legal_values(cell, sudoku):
+
+    #extra the row and column coords from the cell tuple
     row = cell[0]
     column = cell[1]
 
+    #get the values already in the row
     row_values = [sudoku[(row, i)]for i in range(9) if sudoku[(row, i)]!= 0]
-    
+
+    #get the values already in the column
     column_values = [sudoku[(i, column)] for i in range(9) if sudoku[(i, column)] != 0]
 
+    #get the values already in the 3x3 box
     box_values = [sudoku[(i,j)] for i in range(row//3*3, row//3*3 + 3) for j in range(column//3*3, column//3*3 +3) if sudoku[(i,j)] != 0]
 
+    #combine all the used values
     used_values = set(row_values + column_values + box_values)
 
+    #find the legal values remaining 
     legal_values = domain - used_values
 
     return legal_values
 
+#converts the sudoku data into a dictionary, where each cell is represented by its coords (row, column)
 def convert_sudoku_to_dict(sudokuData):
+    #create empty dictionary
     sudoku = {}
+
+    #fil the dictionary by iterating through the sudoku data
     for i in range(9):
         for j in range(9):
             sudoku[(i,j)] = sudokuData[i][j]
 
     return sudoku
 
+#prints the sudoku puzzle in a readable format similar to how its shown in general sudoku puzzles
 def print_sudoku(sudoku):
+
+    #print a horizontal line every 3 rows
     for i in range(9):
         if i % 3 == 0:
             print("------------------------")
-
+        
+        #print a vertical line every 3 columns
         for j in range(9):
             if j %3 == 0:
                 print("|", end = " ")
 
+            #print the value of the current cell
             print(sudoku[(i,j)], end = " ")
 
+        #print end vertical line
         print("|")
 
+    #print bottom horizontal line
     print("------------------------")
 
 
@@ -152,29 +175,36 @@ def print_sudoku(sudoku):
 
 
 
-
+#solving algorithm for the sudoku puzzle using backtracking search with the MRV heuristic
 def solve_sudoku(sudoku):
-    
+
+    #helper function counts the number of legal values available for current cell
     def num_of_legal_values(cell):
         return len(sudoku_legal_values(cell, sudoku))
     
     
-    
+    #find all the empty cells in the sudoku puzzle
     empty_cells = [(i,j) for i in range(9) for j in range(9) if sudoku[(i,j)] == 0]
 
+    #base case: if there are no empty cells, the puzzle is solved
     if not empty_cells:
         return True
 
+    #select the next cell with the minimum number of legal values(MRV)
     cell = min(empty_cells, key = num_of_legal_values)
 
+    #get the legal values for the current cell
     legal_values = sudoku_legal_values(cell, sudoku)
 
-
+    #try each legal value for the current cell
     for value in legal_values:
         sudoku[cell] = value
+        
+        #recursively call to solve the sudoku
         if solve_sudoku(sudoku):
             return True
 
+        #backtrack if the current value does not work
         sudoku[cell] = 0
 
     return False
@@ -182,21 +212,29 @@ def solve_sudoku(sudoku):
 
 
 
+
+#---------MAIN PROGRAM---------
+
+#get the file path and extension from user
 filePath, ext = get_filepath()
 
+#read sudoku data from file
 sudokuData = read_sudoku_file(filePath, ext)
 
+#check if the file is valid
 if not is_valid_file(sudokuData):
     print("Invalid Sudoku file!")
 
+#check if the puzzle is valid
 elif not is_valid_sudoku(sudokuData):
     print ("Invalid Sudoku puzzle!")
 
 else:
 
-
+    #convert sudoku data into dictionary format 
     sudoku = convert_sudoku_to_dict(sudokuData)
 
+    #print the solved sudoku puzzle
     if solve_sudoku(sudoku):
         print("Sudoku succesfully solved!")
         print_sudoku(sudoku)
