@@ -10,6 +10,7 @@
     image scan - data
     controlRoom dockingBay - rooms
     )
+    
     ; -------------------------------
     ; Predicates
     ; -------------------------------
@@ -24,8 +25,8 @@
         ; Links a lander to its internal rooms.
         (lander-rooms ?l - lander ?ro - rooms)
 
-        ; Connects a control room to its docking bay.
-        (connect-rooms ?cr - controlRoom ?db - dockingBay)
+        ; Connects two rooms.
+        (connect-rooms ?r1 - rooms ?r2 - rooms)
 
         ; Keeps record of rovers corresponding lander.
         (rover-lander ?r - rover ?l - lander)

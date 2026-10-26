@@ -39,7 +39,7 @@
         ; Waypoint where data ?d is captured.
         (data-at ?d - data ?w - waypoint)
 
-        ; Records the image a rover is carrying
+        ; Records the data a rover is carrying
         (rover-data ?r - rover ?d - data) 
 
         ; Data that has been transmitted to this lander
@@ -111,7 +111,7 @@
     (:action rover_acquire_data
         :parameters (?r - rover ?w - waypoint ?d - data)
 
-        ; For a rover to acquire image:
+        ; For a rover to acquire piece of data:
         ; 1. The rover must currently not carry any items of data.
         ; 2. (Assumption) The rover must be deployed
         ; 3. The rover must be at the waypoint where the data is captured.

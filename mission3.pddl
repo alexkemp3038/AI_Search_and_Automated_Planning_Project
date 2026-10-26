@@ -67,7 +67,9 @@
 
         ; --- Control Room's and Docking Bay's ---
         (connect-rooms cr1 db1)
+        (connect-rooms db1 cr1)
         (connect-rooms cr2 db2)
+        (connect-rooms db2 cr2)
 
         ; --- Astronauts ---
         (astronaut-lander alice lander1) ; alice belongs to lander 1
