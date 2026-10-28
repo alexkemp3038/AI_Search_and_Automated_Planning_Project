@@ -213,34 +213,42 @@ def solve_sudoku(sudoku):
 
 
 
+
+
+
+
+
+
 #---------MAIN PROGRAM---------
 
-#get the file path and extension from user
-filePath, ext = get_filepath()
+if __name__ == "__main__":
 
-#read sudoku data from file
-sudokuData = read_sudoku_file(filePath, ext)
+    #get the file path and extension from user
+    filePath, ext = get_filepath()
 
-#check if the file is valid
-if not is_valid_file(sudokuData):
-    print("Invalid Sudoku file!")
+    #read sudoku data from file
+    sudokuData = read_sudoku_file(filePath, ext)
 
-#check if the puzzle is valid
-elif not is_valid_sudoku(sudokuData):
-    print ("Invalid Sudoku puzzle!")
+    #check if the file is valid
+    if not is_valid_file(sudokuData):
+        print("Invalid Sudoku file!")
 
-else:
+    #check if the puzzle is valid
+    elif not is_valid_sudoku(sudokuData):
+        print ("Invalid Sudoku puzzle!")
 
-    #convert sudoku data into dictionary format 
-    sudoku = convert_sudoku_to_dict(sudokuData)
-
-    #print the solved sudoku puzzle
-    if solve_sudoku(sudoku):
-        print("Sudoku succesfully solved!")
-        print_sudoku(sudoku)
-    
     else:
-        print("No solution can be found")
+
+        #convert sudoku data into dictionary format 
+        sudoku = convert_sudoku_to_dict(sudokuData)
+
+        #print the solved sudoku puzzle
+        if solve_sudoku(sudoku):
+            print("Sudoku succesfully solved!")
+            print_sudoku(sudoku)
+    
+        else:
+            print("No solution can be found")
 
     
 

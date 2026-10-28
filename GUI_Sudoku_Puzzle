@@ -1,4 +1,7 @@
+import os
 import tkinter as tk
+from tkinter import messagebox, filedialog
+from Sudoku_Puzzle import read_sudoku_file, print_sudoku, solve_sudoku, sudoku_legal_values, domain, is_valid_file, is_valid_sudoku, convert_sudoku_to_dict
 
 # create main window
 window = tk.Tk()
@@ -16,7 +19,7 @@ cells = {}
 for i in range(9):
     for j in range(9):
 
-        entry = tk.Entry(frame, width=3, font=("Arial", 18), jusitfy = "center")
+        entry = tk.Entry(frame, width=3, font=("Arial", 18), justify = "center")
 
         entry.grid(row= i, column= j, padx = 2, pady = 2)
 
@@ -24,11 +27,143 @@ for i in range(9):
 
 # create button to press that will solve the sudoku puzzle
 def click_solved():
-    print ("Solve button clicked")
 
-    button = tk.Button(window, text = "Solve Sudoku", font = ("Arial", 14), command =click_solved)
+    sudoku = []
 
-    button.pack(pady=20)
+    for i in range(9):
+        row = []
+        
+        for j in range(9):
+
+            value = cells[(i,j)].get().strip()
+
+            if value == "":
+                row.append(0)
+                
+            elif len(value) == 1 and int(value) in domain:
+                row.append(int(value))
+
+            else:
+                messagebox.showerror("Invalid Input", "please enter only numbers from 1 to 9")
+                
+                return
+        sudoku.append(row)
+
+    if all(value == 0 for row in sudoku for value in row):
+        messagebox.showerror("Empty Puzzle", "Please load a puzzle to solve!")
+        return
+
+    if not is_valid_file(sudoku):
+        messagebox.showerror("Invalid Format","try another file")
+
+        return 
+
+    if not is_valid_sudoku(sudoku):
+        messagebox.showerror("Invalid sudoku puzzle","does not follow the rules of sudoku")
+
+        return
+    #turn the list into dictionary
+    comp_sudoku = convert_sudoku_to_dict(sudoku)
+
+    #populate the grid
+    if solve_sudoku(comp_sudoku):
+
+        for i in range(9):
+            for j in range(9):
+
+                entry = cells[(i,j)]
+                entry.delete(0, tk.END)
+                entry.insert(0, str(comp_sudoku[(i,j)]))
+
+                if sudoku[i][j] == 0:
+                    entry.config(fg = "blue")
+                else:
+                    entry.config(fg = "black")
+
+        messagebox.showinfo("Sudoku Solved!","Congrats!")
+
+    else:
+        messagebox.showerror("No solution can be found",":(")
+
+#clear the grid
+def clear_button_clicked():
+
+    for entry in cells.values():
+        entry.delete(0, tk.END)
+        entry.config(fg = "black")
+
+#load up a sudoku file
+def load_button_clicked():
+
+    filepath = filedialog.askopenfilename(
+        title="Select Sudoku Puzzle",
+        filetypes=[
+            ("Sudoku files", "*.txt *.csv"),
+            ("Text files", "*.txt"),
+            ("CSV files", "*.csv")
+        ]
+    )
+
+    # Stop if the user cancels
+    if not filepath:
+        return
+
+    try:
+        # Read the puzzle from the selected file
+        ext = os.path.splitext(filepath)[1].lower()
+        sudokuData = read_sudoku_file(filepath, ext)
+
+        # Check the file format
+        if not is_valid_file(sudokuData):
+            messagebox.showerror(
+                "Invalid File",
+                "The selected file is not a valid 9x9 Sudoku."
+            )
+            return
+
+        # Check Sudoku rules
+        if not is_valid_sudoku(sudokuData):
+            messagebox.showerror(
+                "Invalid Puzzle",
+                "The puzzle violates Sudoku rules."
+            )
+            return
+
+        # Display the loaded puzzle
+        for i in range(9):
+            for j in range(9):
+
+                entry = cells[(i, j)]
+                entry.delete(0, tk.END)
+
+                value = sudokuData[i][j]
+
+                if value != 0:
+                    entry.insert(0, str(value))
+
+                entry.config(fg="black")
+
+    except Exception as error:
+        messagebox.showerror(
+            "File Error",
+            f"Could not load the puzzle:\n{error}"
+        )
+
+#Button Designs
+
+button_frame = tk.Frame(window)
+button_frame.pack(pady = 20)
+
+solve_button = tk.Button(button_frame, text= "Solve Puzzle", font = ("Arial", 13), bg="#4CAF50", fg = "white", width = 15, command = click_solved)
+solve_button.pack(side = "left", padx = 10)
+
+
+clear_button = tk.Button(button_frame, text="Clear", font = ("Arial", 13), bg = "#f44336", fg = "white", width = 10, command = clear_button_clicked)
+clear_button.pack(side = "left", padx = 10)
+
+load_button = tk.Button(button_frame,text="Load Puzzle",font=("Arial", 13),bg="#2196F3",fg="white",width=12,command=load_button_clicked)
+
+load_button.pack(side="left", padx=5)
 
 window.mainloop()
     
